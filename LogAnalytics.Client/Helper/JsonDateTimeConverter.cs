@@ -11,14 +11,12 @@ namespace LogAnalytics.Client.Helper
       ref Utf8JsonReader reader,
       Type typeToConvert,
       JsonSerializerOptions options) =>
-          DateTime.ParseExact(reader.GetString(),
-              "ddd MMM dd HH:mm:ss yyyy", CultureInfo.InvariantCulture);
+          reader.GetString().FromModSecDateTime();
 
         public override void Write(
             Utf8JsonWriter writer,
             DateTime dateTimeValue,
             JsonSerializerOptions options) =>
-                writer.WriteStringValue(dateTimeValue.ToString(
-                    "YYYY-MM-DDThh:mm:ssZ", CultureInfo.InvariantCulture));
+                writer.WriteStringValue(dateTimeValue.ToISO8601());
     }
 }

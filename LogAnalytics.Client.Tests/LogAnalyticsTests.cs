@@ -25,10 +25,29 @@ namespace LogAnalytics.Client.Tests
         }
 
         [Fact]
-        public void ItCanDeserializeAJsonLogEntry(){
+        public void ItCanDeserializeAJsonLogEntry()
+        {
             var data = File.ReadAllText("../../../data/SampleEntry.json");
             var entry = JsonSerializer.Deserialize<LogEntry>(data);
             entry.Transaction.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void ItFormatsDateTimeToCorrectFormat()
+        {
+            const string expected = "2021-01-01T13:00:00Z";
+            var dateTime = new DateTime(2021, 01, 01, 13, 00, 00);
+            var actual = dateTime.ToISO8601();
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void ItCanParseModSecDateFormat()
+        {
+            const string logDate = "Fri Jan 01 13:00:00 2021";
+            var expected = new DateTime(2021, 01, 01, 13, 00, 00);
+            var actual = logDate.FromModSecDateTime();
+            actual.Should().Be(expected);
         }
     }
 }
