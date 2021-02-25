@@ -75,7 +75,7 @@ namespace ModSecurityLogger
                 {
                     var json = await File.ReadAllTextAsync(logFile.FilePath).ConfigureAwait(false);
                     var logEntry = JsonSerializer.Deserialize<LogEntry>(json);
-                    log.LogTrace($"{logEntry.Transaction.UniqueId} - {logEntry.Transaction.ClientIp} -> {logEntry.Transaction.HostIp}:{logEntry.Transaction.HostPort}");
+                    log.LogInformation($"{logEntry.Transaction.UniqueId} - {logEntry.Transaction.ClientIp} -> {logEntry.Transaction.HostIp}:{logEntry.Transaction.HostPort}");
                     logClient.Log(logEntry);
                     using var processed = File.Create(Path.Combine(logWatcher.GetProcessedFilesDirectory(), logFile.FileHash));
                     File.Delete(logFile.FilePath);

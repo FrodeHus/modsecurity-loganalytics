@@ -47,7 +47,7 @@ namespace LogAnalytics.Client.Service
 
             _timer.Elapsed += async (s, e) =>
             {
-                _logger.LogTrace("-> Flushing log buffer");
+                _logger.LogInformation("-> Flushing log buffer");
                 (_, var Error) = await Flush().ConfigureAwait(false);
                 if (Error != null)
                 {
@@ -90,7 +90,7 @@ namespace LogAnalytics.Client.Service
                 var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
-                    _logger.LogTrace($"Sent {_buffer.Count} entries to {_logName}");
+                    _logger.LogInformation($"Sent {_buffer.Count} entries to {_logName}");
                     _buffer.Clear();
                     return (result, null);
                 }
