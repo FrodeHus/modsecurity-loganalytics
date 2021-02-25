@@ -43,15 +43,22 @@ namespace ModSecurityLogger
                 logWatcher = new LogWatcherService(o.LogPath);
             });
             if (logClient == null || logWatcher == null) return;
-            logClient.OnError += (s, error) => WriteError(error);
+            logClient.OnError += (_, error) => WriteError(error);
 
             logWatcher.LogFileAdded += async (_, logFile) =>
             {
                 Console.WriteLine($"-> {logFile}");
-                var json = await File.ReadAllTextAsync(logFile).ConfigureAwait(false);
-                var logData = JsonDocument.Parse(json).RootElement;
-                logClient.Log(logData);
-                File.Delete(logFile);
+                try
+                {
+                    var json = await File.ReadAllTextAsync(logFile).ConfigureAwait(false);
+                    var logData = JsonDocument.Parse(json).RootElement;
+                    logClient.Log(logData);
+                    File.Delete(logFile);
+                }
+                catch (Exception ex)
+                {
+                    WriteError(ex.Message);
+                }
             };
 
             logWatcher.Start();

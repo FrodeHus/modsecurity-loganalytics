@@ -23,14 +23,5 @@ namespace LogAnalytics.Client.Tests
             var actual = SignatureHelper.SignMessage(message, secret);
             actual.Should().Be(expected);
         }
-
-        [Fact]
-        public async Task ItValidatesJsonBeforeSending()
-        {
-            var client = Substitute.For<HttpClient>();
-            var service = new LogAnalyticsService(client, "testlog", "123", "secret");
-            var (_, Error) = await service.PostData("asdf").ConfigureAwait(false);
-            Error.Should().StartWith("JSON is not valid");
-        }
     }
 }

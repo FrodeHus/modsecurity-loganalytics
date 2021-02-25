@@ -43,6 +43,7 @@ namespace LogAnalytics.Client.Service
 
             _timer.Elapsed += async (s, e) =>
             {
+                Console.WriteLine("-> Flushing log buffer");
                 (_, var Error) = await Flush().ConfigureAwait(false);
                 if (Error != null)
                 {
@@ -67,7 +68,6 @@ namespace LogAnalytics.Client.Service
         /// <summary>
         /// Sends log data to Log Analytics in JSON-format
         /// </summary>
-        /// <param name="json"></param>
         public async Task<(string Result, string Error)> Flush()
         {
             if (_buffer.Count == 0) return (null, null);
@@ -87,10 +87,11 @@ namespace LogAnalytics.Client.Service
                 var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
+                    Console.WriteLine($"-> Sent {_buffer.Count} entries");
                     _buffer.Clear();
                     return (result, null);
                 }
-
+                Console.WriteLine($"!! Data was not saved: {result}");
                 return (null, result);
             }
             catch (JsonException je)
@@ -99,6 +100,7 @@ namespace LogAnalytics.Client.Service
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"!! Failed to send data: {ex.Message}");
                 return (null, ex.Message);
             }
         }

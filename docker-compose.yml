@@ -1,0 +1,12 @@
+version: '3.1'
+
+services:
+  proxy:
+    container_name: proxy
+    image: modsec-sentinel:latest
+    environment:
+      WORKSPACE_ID: <your workspace id>
+      WORKSPACE_SHARED_KEY: <your shared access key>
+    ports:
+      - 80:80
+      - 443:443
