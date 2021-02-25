@@ -87,7 +87,9 @@ namespace ModSecurityLogger
             };
 
             logWatcher.Start();
-            while (true) { }
+            while (true) {
+                System.Threading.Thread.Sleep((int)TimeSpan.FromMinutes(5).TotalMilliseconds);
+            }
         }
 
         private static void WriteError(string errorMessage)
