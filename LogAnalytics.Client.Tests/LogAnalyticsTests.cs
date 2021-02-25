@@ -49,5 +49,20 @@ namespace LogAnalytics.Client.Tests
             var actual = logDate.FromModSecDateTime();
             actual.Should().Be(expected);
         }
+
+        [Fact]
+        public void ItCanGenerateLogPathFromDateTime(){
+            const string expected = "20210101/20210101-1300";
+            var date = new DateTime(2021, 01, 01, 13, 0, 0);
+            var actual = FileUtils.GenerateLogPathFromDate(date);
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void ItCanGenerateSha256HashesForFiles(){
+            const string expected = "089B6121D5A1F9235F1F73F4B14103C5EF5A83A2360CAC90BC405A35C10EC5EF";
+            var actual = FileUtils.GenerateSha256Hash("../../../data/SampleEntry.json");
+            actual.Should().Be(expected);
+        }
     }
 }

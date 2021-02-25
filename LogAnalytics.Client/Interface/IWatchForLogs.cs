@@ -4,8 +4,10 @@ namespace LogAnalytics.Client.Service
 {
     public interface IWatchForLogs
     {
-        event EventHandler<string> LogFileAdded;
+        event EventHandler<LogAddedEventArgs> LogFileAdded;
 
         void Start();
+
+        string GetProcessedFilesDirectory();
     }
 }

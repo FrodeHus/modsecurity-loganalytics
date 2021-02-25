@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using LogAnalytics.Client.Helper;
 
 namespace LogAnalytics.Client.Service
 {
@@ -11,23 +12,24 @@ namespace LogAnalytics.Client.Service
         private FileSystemWatcher _fileSystemWatcher;
         private bool disposedValue;
         private readonly bool _includeSubdirectories;
-        public event EventHandler<string> LogFileAdded;
+        public event EventHandler<LogAddedEventArgs> LogFileAdded;
 
         public LogWatcherService(string path, bool includeSubdirectories = true, string filter = null)
         {
             _path = path;
             _filter = filter ?? "*";
             _includeSubdirectories = includeSubdirectories;
+            Directory.CreateDirectory(GetProcessedFilesDirectory());
         }
 
         public void Start()
         {
-            Console.WriteLine($"Watching {_path}...");
             _fileSystemWatcher = new FileSystemWatcher(_path, _filter)
             {
                 IncludeSubdirectories = _includeSubdirectories
             };
-            _fileSystemWatcher.Changed += (s, e) => LogFileAdded?.Invoke(this, e.FullPath);
+
+            _fileSystemWatcher.Changed += (s, e) => LogFileAdded?.Invoke(this, new LogAddedEventArgs(e.FullPath, FileUtils.GenerateSha256Hash(e.FullPath)));
             _fileSystemWatcher.Error += (s, e) =>
             {
                 Console.WriteLine(e.GetException().Message);
@@ -37,6 +39,9 @@ namespace LogAnalytics.Client.Service
             _fileSystemWatcher.EnableRaisingEvents = true;
         }
 
+        public string GetProcessedFilesDirectory(){
+            return Path.Combine(Path.GetTempPath(), "processed_logs");
+        }
         private void Restart()
         {
             _fileSystemWatcher.EnableRaisingEvents = false;

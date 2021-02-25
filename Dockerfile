@@ -4,6 +4,7 @@ ADD . .
 RUN dotnet publish -c Release -o publish ModSecurityLogger/ModSecurityLogger.csproj
 
 FROM owasp/modsecurity-crs:nginx
+ENV DOTNET_RUNNING_IN_CONTAINER=true
 COPY modsec-nginx/modsec_config/* /etc/modsecurity.d/
 COPY --from=build /src/publish/ModSecurityLogger .
 COPY modsec-nginx/docker-entrypoint.sh .

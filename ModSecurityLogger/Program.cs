@@ -42,20 +42,33 @@ namespace ModSecurityLogger
                 }
 
                 logClient = new LogAnalyticsService(new System.Net.Http.HttpClient(), o.LogName, workspace, sharedKey);
-                logWatcher = new LogWatcherService(o.LogPath);
+                IWatchForLogs logWatcher = null;
+                Console.WriteLine($"Watching {o.LogPath}...");
+
+                if (IsRunningInContainer())
+                {
+                    Console.WriteLine("-> Running in container - using polling method [10 seconds]");
+                    logWatcher = new PollingLogWatcherService(o.LogPath);
+                }
+                else
+                {
+                    logWatcher = new LogWatcherService(o.LogPath);
+                }
+
             });
             if (logClient == null || logWatcher == null) return;
             logClient.OnError += (_, error) => WriteError(error);
 
             logWatcher.LogFileAdded += async (_, logFile) =>
             {
-                Console.WriteLine($"-> {logFile}");
                 try
                 {
-                    var json = await File.ReadAllTextAsync(logFile).ConfigureAwait(false);
+                    var json = await File.ReadAllTextAsync(logFile.FilePath).ConfigureAwait(false);
                     var logEntry = JsonSerializer.Deserialize<LogEntry>(json);
+                    Console.WriteLine($"-> {logEntry.Transaction.UniqueId} - {logEntry.Transaction.Request.Uri}");
                     logClient.Log(logEntry);
-                    File.Delete(logFile);
+                    using var processed = File.Create(Path.Combine(logWatcher.GetProcessedFilesDirectory(), logFile.FileHash));
+                    File.Delete(logFile.FilePath);
                 }
                 catch (Exception ex)
                 {
@@ -72,6 +85,11 @@ namespace ModSecurityLogger
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Failed to send log data: " + errorMessage);
             Console.ResetColor();
+        }
+
+        private static bool IsRunningInContainer()
+        {
+            return bool.Parse(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"));
         }
     }
 }
