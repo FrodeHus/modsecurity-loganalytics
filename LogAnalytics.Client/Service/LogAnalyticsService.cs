@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using LogAnalytics.Client.Helper;
+using LogAnalytics.Client.Model;
 
 namespace LogAnalytics.Client.Service
 {
@@ -60,6 +61,10 @@ namespace LogAnalytics.Client.Service
             _httpClient.DefaultRequestHeaders.Add("time-generated-field", "transaction_time_stamp_s");
         }
 
+        public void Log(string json, string timeField = "transaction.time_stamp"){
+            var entry = JsonSerializer.Deserialize<LogEntry>(json);
+            
+        }
         public void Log(JsonElement entry)
         {
             _buffer.Add(entry);

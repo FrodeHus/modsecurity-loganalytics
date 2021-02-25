@@ -1,11 +1,11 @@
 using System;
-using System.Net.Http;
+using System.Globalization;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 using FluentAssertions;
 using LogAnalytics.Client.Helper;
-using LogAnalytics.Client.Service;
-using NSubstitute;
+using LogAnalytics.Client.Model;
 using Xunit;
 
 namespace LogAnalytics.Client.Tests
@@ -22,6 +22,13 @@ namespace LogAnalytics.Client.Tests
             const string expected = "/B6hLdaYkpP4IKlb9wQJoPsgr1d5IUxdz1nothMv8cU=";
             var actual = SignatureHelper.SignMessage(message, secret);
             actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void ItCanDeserializeAJsonLogEntry(){
+            var data = File.ReadAllText("../../../data/SampleEntry.json");
+            var entry = JsonSerializer.Deserialize<LogEntry>(data);
+            entry.Transaction.Should().NotBeNull();
         }
     }
 }
