@@ -36,6 +36,7 @@ This repo also contains a Log Analytics API client which can be used standalone.
 ## Example config
 
 In this repo, there is a sample configuration for nginx with a aspnet.core _Hello world!_ sample backend in [modsec-nginx](modsec-nginx).
+It also makes sure that certain security headers are included in the response just in case the backend doesn't supply them itself.
 
 Using the supplied `docker-compose.yml` you should be able to run a `modsecurity+nginx with ModSecurityLogger` proxy in front of the ASPNET.Core sample backend by simply issuing a `docker-compose up --build` command.
 
