@@ -7,6 +7,12 @@ services:
     environment:
       WORKSPACE_ID: <your workspace id>
       WORKSPACE_SHARED_KEY: <your shared access key>
+    volumes:
+      - ./modsec-nginx/nginx/conf.d:/etc/nginx/conf.d/
+      - ./modsec-nginx/nginx/ssl:/etc/nginx/ssl/
     ports:
       - 80:80
       - 443:443
+  sampleserver:
+    container_name: sampleserver
+    image: mcr.microsoft.com/dotnet/samples:aspnetapp
