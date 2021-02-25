@@ -28,7 +28,20 @@ namespace LogAnalytics.Client.Service
                 IncludeSubdirectories = _includeSubdirectories
             };
             _fileSystemWatcher.Changed += (s, e) => LogFileAdded?.Invoke(this, e.FullPath);
+            _fileSystemWatcher.Error += (s, e) =>
+            {
+                Console.WriteLine(e.GetException().Message);
+                Restart();
+            };
+
             _fileSystemWatcher.EnableRaisingEvents = true;
+        }
+
+        private void Restart()
+        {
+            _fileSystemWatcher.EnableRaisingEvents = false;
+            _fileSystemWatcher.Dispose();
+            Start();
         }
 
         protected virtual void Dispose(bool disposing)
