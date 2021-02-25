@@ -23,6 +23,12 @@ Copyright (C) 2021 ModSecurityLogger
 
 Workspace ID and Access key can also be specified using environment variables WORKSPACE_ID and WORKSPACE_SHARED_KEY.
 
+## Create a Log Analytics Workspace
+
+You can use this quick deploy to create a Workspace for playing around
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw%2Egithubusercontent%2Ecom%2FFrodeHus%modsecurity%2Dloganalytics%2Fmain%2Ftemplates%2Fazure%2Ddeploy%2Ejson)
+
 ## LogAnalytics.Client
 
 This repo also contains a Log Analytics API client which can be used standalone.

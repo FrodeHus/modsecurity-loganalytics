@@ -1,0 +1,110 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "workspaceName": {
+          "type": "string",
+          "defaultValue": "OpenWAF",
+          "metadata": {
+            "description": "Name of the workspace."
+          }
+      },
+      "sku": {
+          "type": "string",
+          "allowedValues": [
+            "pergb2018",
+            "Free",
+            "Standalone",
+            "PerNode",
+            "Standard",
+            "Premium"
+            ],
+          "defaultValue": "pergb2018",
+          "metadata": {
+          "description": "Pricing tier: PerGB2018 or legacy tiers (Free, Standalone, PerNode, Standard or Premium) which are not available to all customers."
+          }
+        },
+        "location": {
+          "type": "string",
+          "defaultValue": "westeurope",
+          "allowedValues": [
+          "australiacentral", 
+          "australiaeast", 
+          "australiasoutheast", 
+          "brazilsouth",
+          "canadacentral", 
+          "centralindia", 
+          "centralus", 
+          "eastasia", 
+          "eastus", 
+          "eastus2", 
+          "francecentral", 
+          "japaneast", 
+          "koreacentral", 
+          "northcentralus", 
+          "northeurope", 
+          "southafricanorth", 
+          "southcentralus", 
+          "southeastasia",
+          "switzerlandnorth",
+          "switzerlandwest",
+          "uksouth", 
+          "ukwest", 
+          "westcentralus", 
+          "westeurope", 
+          "westus", 
+          "westus2" 
+          ],
+          "metadata": {
+              "description": "Specifies the location for the workspace."
+              }
+        },
+        "retentionInDays": {
+          "type": "int",
+          "defaultValue": 120,
+          "metadata": {
+            "description": "Number of days to retain data."
+          }
+        },
+        "resourcePermissions": {
+          "type": "bool",
+          "metadata": {
+            "description": "true to use resource or workspace permissions. false to require workspace permissions."
+          }
+      }
+
+      },
+      "resources": [
+      {
+          "type": "Microsoft.OperationalInsights/workspaces",
+          "name": "[parameters('workspaceName')]",
+          "apiVersion": "2020-08-01",
+          "location": "[parameters('location')]",
+          "properties": {
+              "sku": {
+                  "name": "[parameters('sku')]"
+              },
+              "retentionInDays": "[parameters('retentionInDays')]",
+              "features": {
+                  "searchVersion": 1,
+                  "legacy": 0,
+                  "enableLogAccessUsingOnlyResourcePermissions": "[parameters('resourcePermissions')]"
+              }
+          }
+      },
+      {
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "apiVersion": "2020-08-01",
+            "name": "[concat(parameters('workspaceName'), '/5374705b-477d-4faa-87e3-2f3aa2800812')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('workspaceName'))]"
+            ],
+            "properties": {
+                "Category": "Detection",
+                "DisplayName": "OWASP Rule violations",
+                "Query": "OpenWAF_CL\r\n| order by TimeGenerated desc\r\n| project t=todynamic(transaction_messages_s)\r\n| mv-apply t on\r\n(    extend file=tostring(t.details.file)\r\n    | project rule=extract(@\"([A-Z0-9\\-]+)\\.conf\", 1, file)\r\n)\r\n| summarize count() by rule\r\n|render piechart ",
+                "Version": 2
+            }
+        }
+  ]
+}
