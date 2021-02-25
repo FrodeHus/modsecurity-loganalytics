@@ -42,7 +42,6 @@ namespace ModSecurityLogger
                 }
 
                 logClient = new LogAnalyticsService(new System.Net.Http.HttpClient(), o.LogName, workspace, sharedKey);
-                IWatchForLogs logWatcher = null;
                 Console.WriteLine($"Watching {o.LogPath}...");
 
                 if (IsRunningInContainer())
@@ -89,7 +88,7 @@ namespace ModSecurityLogger
 
         private static bool IsRunningInContainer()
         {
-            return bool.Parse(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"));
+            return bool.Parse(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") ?? "false");
         }
     }
 }

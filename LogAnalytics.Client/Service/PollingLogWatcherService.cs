@@ -9,7 +9,6 @@ namespace LogAnalytics.Client.Service
     public class PollingLogWatcherService : IWatchForLogs, IDisposable
     {
         private bool disposedValue;
-        private const double POLLING_INTERVAL = 10000;
         private Timer _poller;
         private readonly string _path;
         private readonly string _processedPath = $"{Path.GetTempPath()}processed_logs";
@@ -32,9 +31,11 @@ namespace LogAnalytics.Client.Service
         }
         private void StartPolling()
         {
-            _poller = new Timer(POLLING_INTERVAL)
+            _poller = new Timer
             {
-                AutoReset = true
+                AutoReset = true,
+                Enabled = true,
+                Interval = TimeSpan.FromSeconds(10).TotalMilliseconds
             };
             _poller.Elapsed += CheckForNewLogs;
             _poller.Start();
@@ -42,6 +43,7 @@ namespace LogAnalytics.Client.Service
 
         private void CheckForNewLogs(object sender, ElapsedEventArgs e)
         {
+            Console.WriteLine("-> processing logs...");
             var files = Directory.EnumerateFiles(_path, "*", new EnumerationOptions
             {
                 RecurseSubdirectories = true
