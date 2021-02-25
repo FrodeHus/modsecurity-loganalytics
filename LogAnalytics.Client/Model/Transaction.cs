@@ -28,5 +28,7 @@ namespace LogAnalytics.Client.Model
         public Response Response { get; set; }
         [JsonPropertyName("messages")]
         public Information[] Messages { get; set; }
+        [JsonPropertyName("producer")]
+        public Producer Producer { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace LogAnalytics.Client.Service
         private readonly string _workspaceId;
         private readonly string _sharedAccessKey;
         private readonly string _url;
-        private readonly List<JsonElement> _buffer = new();
+        private readonly List<LogEntry> _buffer = new();
         private System.Timers.Timer _timer;
 
         public LogAnalyticsService(HttpClient httpClient, string logName, string workspaceId, string sharedAccessKey)
@@ -60,12 +60,7 @@ namespace LogAnalytics.Client.Service
             _httpClient.DefaultRequestHeaders.Add("Log-Type", _logName);
             _httpClient.DefaultRequestHeaders.Add("time-generated-field", "transaction_time_stamp_s");
         }
-
-        public void Log(string json, string timeField = "transaction.time_stamp"){
-            var entry = JsonSerializer.Deserialize<LogEntry>(json);
-            
-        }
-        public void Log(JsonElement entry)
+        public void Log(LogEntry entry)
         {
             _buffer.Add(entry);
         }

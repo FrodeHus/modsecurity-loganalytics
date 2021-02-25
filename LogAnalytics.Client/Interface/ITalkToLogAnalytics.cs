@@ -1,6 +1,7 @@
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
+using LogAnalytics.Client.Model;
 
 namespace LogAnalytics.Client.Service
 {
@@ -9,6 +10,6 @@ namespace LogAnalytics.Client.Service
         event EventHandler<string> OnError;
 
         Task<(string Result, string Error)> Flush();
-        void Log(JsonElement entry);
+        void Log(LogEntry entry);
     }
 }
