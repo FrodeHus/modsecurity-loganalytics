@@ -58,7 +58,6 @@ namespace LogAnalytics.Client.Service
         {
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _httpClient.DefaultRequestHeaders.Add("Log-Type", _logName);
-            _httpClient.DefaultRequestHeaders.Add("time-generated-field", "transaction_time_stamp_s");
         }
         public void Log(LogEntry entry)
         {
