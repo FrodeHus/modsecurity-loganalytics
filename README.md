@@ -40,6 +40,10 @@ It also makes sure that certain security headers are included in the response ju
 
 Using the supplied `docker-compose.yml` you should be able to run a `modsecurity+nginx with ModSecurityLogger` proxy in front of the ASPNET.Core sample backend by simply issuing a `docker-compose up --build` command.
 
+Add `www.sample.com` to your `/etc/hosts` and give it a spin!
+
+Or just hit up the proxy with `curl "http://localhost/?1' or 1=1--"` and watch your new WAF block your request and log it to Log Analytics (provided you configured your own workspace and shared key).
+
 ## The most prevalent OWASP rule violations
 
 Once the logs are in Log Analytics Workspace, further analysis can be done and alert rules set up in Azure Sentinel - but one fun visualization is to see which OWASP rules are violated most often.
