@@ -26,3 +26,25 @@ Workspace ID and Access key can also be specified using environment variables WO
 ## LogAnalytics.Client
 
 This repo also contains a Log Analytics API client which can be used standalone.
+
+## The most prevalent OWASP rule violations
+
+Once the logs are in Log Analytics Workspace, further analysis can be done and alert rules set up in Azure Sentinel - but one fun visualization is to see which OWASP rules are violated most often.
+
+Run this query:
+
+```kql
+OpenWAF_CL
+| order by TimeGenerated desc
+| project t=todynamic(transaction_messages_s)
+| mv-apply t on
+(    extend file=tostring(t.details.file)
+    | project rule=extract(@"([A-Z0-9\-]+)\.conf", 1, file)
+)
+| summarize count() by rule
+|render piechart 
+```
+
+to get this:
+
+![Most violated OWASP rules](docs/owasp-modsec.png)
