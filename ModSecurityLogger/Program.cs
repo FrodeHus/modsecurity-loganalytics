@@ -3,6 +3,8 @@ using System.IO;
 using CommandLine;
 using LogAnalytics.Client.Service;
 using System.Text.Json;
+using LogAnalytics.Client.Model;
+
 namespace ModSecurityLogger
 {
     class Program
@@ -51,8 +53,8 @@ namespace ModSecurityLogger
                 try
                 {
                     var json = await File.ReadAllTextAsync(logFile).ConfigureAwait(false);
-                    var logData = JsonDocument.Parse(json).RootElement;
-                    logClient.Log(logData);
+                    var logEntry = JsonSerializer.Deserialize<LogEntry>(json);
+                    logClient.Log(logEntry);
                     File.Delete(logFile);
                 }
                 catch (Exception ex)
