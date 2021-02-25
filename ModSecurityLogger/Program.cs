@@ -4,6 +4,7 @@ using CommandLine;
 using LogAnalytics.Client.Service;
 using System.Text.Json;
 using LogAnalytics.Client.Model;
+using Microsoft.Extensions.Logging;
 
 namespace ModSecurityLogger
 {
@@ -22,6 +23,16 @@ namespace ModSecurityLogger
         }
         static void Main(string[] args)
         {
+            using ILoggerFactory loggerFactory =
+               LoggerFactory.Create(builder =>
+                   builder.AddSimpleConsole(options =>
+                   {
+                       options.IncludeScopes = true;
+                       options.SingleLine = true;
+                       options.TimestampFormat = "hh:mm:ss ";
+                   }));
+
+            var log = loggerFactory.CreateLogger<Program>();
             ITalkToLogAnalytics logClient = null;
             IWatchForLogs logWatcher = null;
             Parser.Default.ParseArguments<Options>(args)
@@ -31,22 +42,22 @@ namespace ModSecurityLogger
                 var sharedKey = o.SharedAccessKey ?? Environment.GetEnvironmentVariable("WORKSPACE_SHARED_KEY");
                 if (string.IsNullOrWhiteSpace(workspace))
                 {
-                    WriteError("Workspace ID missing - specify either by using -w or WORKSPACE_ID environment variable");
+                    log.LogError("Workspace ID missing - specify either by using -w or WORKSPACE_ID environment variable");
                     return;
                 }
 
                 if (string.IsNullOrEmpty(sharedKey))
                 {
-                    WriteError("Workspace shared access key missing - specify either by using -k or WORKSPACE_SHARED_KEY environment variable");
+                    log.LogError("Workspace shared access key missing - specify either by using -k or WORKSPACE_SHARED_KEY environment variable");
                     return;
                 }
 
-                logClient = new LogAnalyticsService(new System.Net.Http.HttpClient(), o.LogName, workspace, sharedKey);
-                Console.WriteLine($"Watching {o.LogPath}...");
+                logClient = new LogAnalyticsService(new System.Net.Http.HttpClient(), o.LogName, workspace, sharedKey, loggerFactory.CreateLogger<ITalkToLogAnalytics>());
+                log.LogInformation($"Watching {o.LogPath}...");
 
                 if (IsRunningInContainer())
                 {
-                    Console.WriteLine("-> Running in container - using polling method [10 seconds]");
+                    log.LogInformation("Running in container - using polling method [10 seconds]");
                     logWatcher = new PollingLogWatcherService(o.LogPath);
                 }
                 else
@@ -64,14 +75,14 @@ namespace ModSecurityLogger
                 {
                     var json = await File.ReadAllTextAsync(logFile.FilePath).ConfigureAwait(false);
                     var logEntry = JsonSerializer.Deserialize<LogEntry>(json);
-                    Console.WriteLine($"-> {logEntry.Transaction.UniqueId} - {logEntry.Transaction.Request.Uri}");
+                    log.LogTrace($"{logEntry.Transaction.UniqueId} - {logEntry.Transaction.ClientIp} -> {logEntry.Transaction.HostIp}:{logEntry.Transaction.HostPort}");
                     logClient.Log(logEntry);
                     using var processed = File.Create(Path.Combine(logWatcher.GetProcessedFilesDirectory(), logFile.FileHash));
                     File.Delete(logFile.FilePath);
                 }
                 catch (Exception ex)
                 {
-                    WriteError(ex.Message);
+                    log.LogError(ex.Message);
                 }
             };
 

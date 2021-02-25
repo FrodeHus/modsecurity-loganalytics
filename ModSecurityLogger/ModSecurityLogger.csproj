@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="commandlineparser" Version="2.8.0" />
+    <PackageReference Include="microsoft.extensions.logging" Version="5.0.0" />
+    <PackageReference Include="microsoft.extensions.logging.console" Version="5.0.0" />
   </ItemGroup>
 
   <PropertyGroup>

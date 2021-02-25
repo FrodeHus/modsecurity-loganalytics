@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LogAnalytics.Client.Helper;
 using LogAnalytics.Client.Model;
+using Microsoft.Extensions.Logging;
 
 namespace LogAnalytics.Client.Service
 {
@@ -21,14 +22,16 @@ namespace LogAnalytics.Client.Service
         private readonly string _url;
         private readonly List<LogEntry> _buffer = new();
         private System.Timers.Timer _timer;
+        private readonly ILogger<ITalkToLogAnalytics> _logger;
 
-        public LogAnalyticsService(HttpClient httpClient, string logName, string workspaceId, string sharedAccessKey)
+        public LogAnalyticsService(HttpClient httpClient, string logName, string workspaceId, string sharedAccessKey, ILogger<ITalkToLogAnalytics> logger)
         {
             _url = "https://" + workspaceId + ".ods.opinsights.azure.com/api/logs?api-version=2016-04-01";
             _httpClient = httpClient;
             _logName = logName;
             _workspaceId = workspaceId;
             _sharedAccessKey = sharedAccessKey;
+            _logger = logger;
             InitializeClient();
             InitializeTimer();
         }
@@ -44,7 +47,7 @@ namespace LogAnalytics.Client.Service
 
             _timer.Elapsed += async (s, e) =>
             {
-                Console.WriteLine("-> Flushing log buffer");
+                _logger.LogTrace("-> Flushing log buffer");
                 (_, var Error) = await Flush().ConfigureAwait(false);
                 if (Error != null)
                 {
@@ -87,11 +90,11 @@ namespace LogAnalytics.Client.Service
                 var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine($"-> Sent {_buffer.Count} entries");
+                    _logger.LogTrace($"Sent {_buffer.Count} entries to {_logName}");
                     _buffer.Clear();
                     return (result, null);
                 }
-                Console.WriteLine($"!! Data was not saved: {result}");
+                _logger.LogError($"Data was not saved: {result}");
                 return (null, result);
             }
             catch (JsonException je)
@@ -100,7 +103,7 @@ namespace LogAnalytics.Client.Service
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"!! Failed to send data: {ex.Message}");
+                _logger.LogError($"Failed to send data: {ex.Message}");
                 return (null, ex.Message);
             }
         }

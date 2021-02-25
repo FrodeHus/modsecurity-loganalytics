@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="microsoft.extensions.fileproviders.physical" Version="5.0.0" />
+    <PackageReference Include="microsoft.extensions.logging.console" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

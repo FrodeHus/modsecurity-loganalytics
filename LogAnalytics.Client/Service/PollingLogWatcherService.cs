@@ -43,7 +43,6 @@ namespace LogAnalytics.Client.Service
 
         private void CheckForNewLogs(object sender, ElapsedEventArgs e)
         {
-            Console.WriteLine("-> processing logs...");
             var files = Directory.EnumerateFiles(_path, "*", new EnumerationOptions
             {
                 RecurseSubdirectories = true
