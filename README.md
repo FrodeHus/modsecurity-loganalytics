@@ -33,6 +33,12 @@ You can use this quick deploy to create a Workspace for playing around
 
 This repo also contains a Log Analytics API client which can be used standalone.
 
+## Example config
+
+In this repo, there is a sample configuration for nginx with a aspnet.core _Hello world!_ sample backend in [modsec-nginx](modsec-nginx).
+
+Using the supplied `docker-compose.yml` you should be able to run a `modsecurity+nginx with ModSecurityLogger` proxy in front of the ASPNET.Core sample backend by simply issuing a `docker-compose up --build` command.
+
 ## The most prevalent OWASP rule violations
 
 Once the logs are in Log Analytics Workspace, further analysis can be done and alert rules set up in Azure Sentinel - but one fun visualization is to see which OWASP rules are violated most often.

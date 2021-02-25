@@ -3,6 +3,9 @@ version: '3.1'
 services:
   proxy:
     container_name: proxy
+    build: 
+      context: .
+      dockerfile: Dockerfile
     image: modsec-sentinel:latest
     environment:
       WORKSPACE_ID: <your workspace id>
