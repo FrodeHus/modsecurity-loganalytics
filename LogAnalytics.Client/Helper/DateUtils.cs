@@ -12,6 +12,10 @@ namespace LogAnalytics.Client.Helper
 
         public static DateTime FromModSecDateTime(this string dateTime)
         {
+            if (DateTime.TryParseExact(dateTime, "ddd MMM  d HH:mm:ss yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out DateTime date))
+            {
+                return date;
+            }
             return DateTime.ParseExact(dateTime, "ddd MMM dd HH:mm:ss yyyy", CultureInfo.InvariantCulture);
         }
     }
