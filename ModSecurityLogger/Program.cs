@@ -14,12 +14,14 @@ namespace ModSecurityLogger
         {
             [Option('w', "workspace", Required = false, HelpText = "ID of your workspace")]
             public string WorkspaceID { get; set; }
-            [Option('l', "log", Required = true, HelpText = "Name of the datasource/log you wish to send data to")]
+            [Option('l', "log", Required = false, HelpText = "Name of the datasource/log you wish to send data to")]
             public string LogName { get; set; }
             [Option('k', "key", Required = false, HelpText = "Access key secret")]
             public string SharedAccessKey { get; set; }
-            [Option('p', "path", Required = true, HelpText = "Where to look for logfiles")]
+            [Option('p', "path", Required = false, HelpText = "Where to look for logfiles")]
             public string LogPath { get; set; }
+            [Option('f', "config-file", Required = false, HelpText = "Provide all configuration via file")]
+            public string ConfigFile { get; set; }
         }
         static void Main(string[] args)
         {
@@ -35,34 +37,42 @@ namespace ModSecurityLogger
             var log = loggerFactory.CreateLogger<Program>();
             ITalkToLogAnalytics logClient = null;
             IWatchForLogs logWatcher = null;
+            Configuration config = new();
             Parser.Default.ParseArguments<Options>(args)
             .WithParsed(o =>
             {
+                if (!string.IsNullOrEmpty(o.ConfigFile))
+                {
+                    config = Configuration.FromFile(o.ConfigFile);
+                }
                 var workspace = o.WorkspaceID ?? Environment.GetEnvironmentVariable("WORKSPACE_ID");
+                if (!string.IsNullOrEmpty(workspace))
+                {
+                    config.WorkspaceId = workspace;
+                }
+
                 var sharedKey = o.SharedAccessKey ?? Environment.GetEnvironmentVariable("WORKSPACE_SHARED_KEY");
-                if (string.IsNullOrWhiteSpace(workspace))
+                if (!string.IsNullOrEmpty(sharedKey))
                 {
-                    log.LogError("Workspace ID missing - specify either by using -w or WORKSPACE_ID environment variable");
-                    return;
+                    config.SharedAccessKey = sharedKey;
                 }
 
-                if (string.IsNullOrEmpty(sharedKey))
+                if (!string.IsNullOrEmpty(o.LogName))
                 {
-                    log.LogError("Workspace shared access key missing - specify either by using -k or WORKSPACE_SHARED_KEY environment variable");
-                    return;
+                    config.LogName = o.LogName;
                 }
 
-                logClient = new LogAnalyticsService(new System.Net.Http.HttpClient(), o.LogName, workspace, sharedKey, loggerFactory.CreateLogger<ITalkToLogAnalytics>());
+                logClient = new LogAnalyticsService(new System.Net.Http.HttpClient(), config, loggerFactory.CreateLogger<ITalkToLogAnalytics>());
                 log.LogInformation($"Watching {o.LogPath}...");
 
                 if (IsRunningInContainer())
                 {
                     log.LogInformation("Running in container - using polling method [10 seconds]");
-                    logWatcher = new PollingLogWatcherService(o.LogPath);
+                    logWatcher = new PollingLogWatcherService(config);
                 }
                 else
                 {
-                    logWatcher = new LogWatcherService(o.LogPath);
+                    logWatcher = new LogWatcherService(config);
                 }
 
             });
@@ -87,7 +97,8 @@ namespace ModSecurityLogger
             };
 
             logWatcher.Start();
-            while (true) {
+            while (true)
+            {
                 System.Threading.Thread.Sleep((int)TimeSpan.FromMinutes(5).TotalMilliseconds);
             }
         }

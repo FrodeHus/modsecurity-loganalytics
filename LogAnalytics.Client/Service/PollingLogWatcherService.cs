@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Timers;
 using LogAnalytics.Client.Helper;
+using LogAnalytics.Client.Model;
 
 namespace LogAnalytics.Client.Service
 {
@@ -13,9 +14,17 @@ namespace LogAnalytics.Client.Service
         private readonly string _path;
         private readonly string _processedPath = $"{Path.GetTempPath()}processed_logs";
 
-        public PollingLogWatcherService(string path)
+        public PollingLogWatcherService(Configuration configuration)
         {
-            _path = path;
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+            if (string.IsNullOrEmpty(configuration.LogDirectory))
+            {
+                throw new ArgumentNullException("logDirectory");
+            }
+            _path = configuration.LogDirectory;
             Directory.CreateDirectory(GetProcessedFilesDirectory());
         }
 

@@ -24,13 +24,18 @@ namespace LogAnalytics.Client.Service
         private System.Timers.Timer _timer;
         private readonly ILogger<ITalkToLogAnalytics> _logger;
 
-        public LogAnalyticsService(HttpClient httpClient, string logName, string workspaceId, string sharedAccessKey, ILogger<ITalkToLogAnalytics> logger)
+        public LogAnalyticsService(HttpClient httpClient, Configuration configuration, ILogger<ITalkToLogAnalytics> logger)
         {
-            _url = "https://" + workspaceId + ".ods.opinsights.azure.com/api/logs?api-version=2016-04-01";
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            _url = "https://" + configuration.WorkspaceId + ".ods.opinsights.azure.com/api/logs?api-version=2016-04-01";
             _httpClient = httpClient;
-            _logName = logName;
-            _workspaceId = workspaceId;
-            _sharedAccessKey = sharedAccessKey;
+            _logName = configuration.LogName;
+            _workspaceId = configuration.WorkspaceId;
+            _sharedAccessKey = configuration.SharedAccessKey;
             _logger = logger;
             InitializeClient();
             InitializeTimer();

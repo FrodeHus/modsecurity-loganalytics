@@ -66,6 +66,15 @@ namespace LogAnalytics.Client.Tests
             const string expected = "089B6121D5A1F9235F1F73F4B14103C5EF5A83A2360CAC90BC405A35C10EC5EF";
             var actual = FileUtils.GenerateSha256Hash("../../../data/SampleEntry.json");
             actual.Should().Be(expected);
+
+        }
+
+        [Fact]
+        public void ItCanReadConfigFromFile()
+        {
+            var expected = new Configuration("123", "secret", "ModSecurity", "/var/log/modsecurity/audit");
+            var actual = Configuration.FromFile("../../../data/SampleConfig.json");
+            actual.Should().BeEquivalentTo(expected);
         }
     }
 }

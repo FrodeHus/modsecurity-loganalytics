@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using LogAnalytics.Client.Helper;
+using LogAnalytics.Client.Model;
 
 namespace LogAnalytics.Client.Service
 {
@@ -14,9 +15,17 @@ namespace LogAnalytics.Client.Service
         private readonly bool _includeSubdirectories;
         public event EventHandler<LogAddedEventArgs> LogFileAdded;
 
-        public LogWatcherService(string path, bool includeSubdirectories = true, string filter = null)
+        public LogWatcherService(Configuration configuration, bool includeSubdirectories = true, string filter = null)
         {
-            _path = path;
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+            if (string.IsNullOrEmpty(configuration.LogDirectory))
+            {
+                throw new ArgumentNullException("logDirectory");
+            }
+            _path = configuration.LogDirectory;
             _filter = filter ?? "*";
             _includeSubdirectories = includeSubdirectories;
             Directory.CreateDirectory(GetProcessedFilesDirectory());
