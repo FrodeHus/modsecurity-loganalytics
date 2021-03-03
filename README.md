@@ -2,28 +2,51 @@
 
 # ModSecurity logger for Azure Log Analytics
 
-Simple console application that monitors a folder and sends off ModSecurity logs to Azure Log Analytics (buffered - every 2 minutes).
-
-Only supports JSON-formatted ModSecurity logs.
+Simple console application that monitors a folder and sends off ModSecurity logs to Azure Log Analytics (buffered - every 2 minutes by default).
 
 ```text
 ModSecurityLogger 1.0.0
 Copyright (C) 2021 ModSecurityLogger
 
-  -w, --workspace    ID of your workspace
+  -w, --workspace      ID of your workspace
 
-  -l, --log          Required. Name of the datasource/log you wish to send data to
+  -l, --log            Name of the datasource/log you wish to send data to
 
-  -k, --key          Access key secret
+  -k, --key            Access key secret
 
-  -p, --path         Required. Where to look for logfiles
+  -p, --path           Where to look for logfiles
 
-  --help             Display this help screen.
+  -f, --config-file    Provide all configuration via file
 
-  --version          Display version information.
+  --help               Display this help screen.
+
+  --version            Display version information.
+
+```
+
+Configuration file follows this format (use this to lock down permissions and not have secrets show up in arguments):
+
+```json
+{
+    "WorkspaceId": "123",
+    "SharedAccessKey": "secret",
+    "LogName": "ModSecurity",
+    "LogDirectory": "/var/log/modsecurity/audit"
+}
 ```
 
 Workspace ID and Access key can also be specified using environment variables WORKSPACE_ID and WORKSPACE_SHARED_KEY.
+
+## Configure your ModSecurity
+
+Make sure your `modsecurity.conf` has the following configuration:
+
+```text
+SecAuditLogType Concurrent
+SecAuditLogStorageDir /var/log/modsecurity/audit
+SecAuditLogFormat JSON
+```
+
 
 ## Create a Log Analytics Workspace
 
