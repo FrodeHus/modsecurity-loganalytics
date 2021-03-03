@@ -38,12 +38,12 @@ jobs:
         run: |
           tag=$(git describe --tags --abbrev=0)
           release_name="ModSecurityLogger-$tag-${{matrix.target}}"
-          dotnet publish ModSecurity/ModSecurity.csproj --runtime "${{matrix.target}}" -c Release -o "$release_name" --self-contained
+          dotnet publish ModSecurityLogger/ModSecurityLogger.csproj --runtime "${{matrix.target}}" -c Release -o "$release_name" --self-contained
           
           if ["${{matrix.target}}" == "win-x64"]; then
             7z a -tzip "${release_name}.zip" "./${release_name}/*"
           else
-            tar czvf "${release_name}.tar.gz "$release_name"
+            tar czvf "${release_name}.tar.gz" "$release_name"
           fi
           
           rm -r "$release_name"
