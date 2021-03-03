@@ -13,6 +13,7 @@ namespace LogAnalytics.Client.Service
         private Timer _poller;
         private readonly string _path;
         private readonly string _processedPath = $"{Path.GetTempPath()}processed_logs";
+        private readonly Configuration configuration;
 
         public PollingLogWatcherService(Configuration configuration)
         {
@@ -26,6 +27,7 @@ namespace LogAnalytics.Client.Service
             }
             _path = configuration.LogDirectory;
             Directory.CreateDirectory(GetProcessedFilesDirectory());
+            this.configuration = configuration;
         }
 
         public event EventHandler<LogAddedEventArgs> LogFileAdded;
@@ -44,7 +46,7 @@ namespace LogAnalytics.Client.Service
             {
                 AutoReset = true,
                 Enabled = true,
-                Interval = TimeSpan.FromSeconds(10).TotalMilliseconds
+                Interval = configuration.PollingInterval
             };
             _poller.Elapsed += CheckForNewLogs;
             _poller.Start();

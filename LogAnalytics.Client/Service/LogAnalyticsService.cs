@@ -16,9 +16,7 @@ namespace LogAnalytics.Client.Service
     {
         public event EventHandler<string> OnError;
         private readonly HttpClient _httpClient;
-        private readonly string _logName;
-        private readonly string _workspaceId;
-        private readonly string _sharedAccessKey;
+        private readonly Configuration _configuration;
         private readonly string _url;
         private readonly List<LogEntry> _buffer = new();
         private System.Timers.Timer _timer;
@@ -33,9 +31,7 @@ namespace LogAnalytics.Client.Service
 
             _url = "https://" + configuration.WorkspaceId + ".ods.opinsights.azure.com/api/logs?api-version=2016-04-01";
             _httpClient = httpClient;
-            _logName = configuration.LogName;
-            _workspaceId = configuration.WorkspaceId;
-            _sharedAccessKey = configuration.SharedAccessKey;
+            _configuration = configuration;
             _logger = logger;
             InitializeClient();
             InitializeTimer();
@@ -45,7 +41,7 @@ namespace LogAnalytics.Client.Service
         {
             _timer = new System.Timers.Timer
             {
-                Interval = TimeSpan.FromMinutes(2).TotalMilliseconds,
+                Interval = _configuration.SaveInterval,
                 AutoReset = true,
                 Enabled = true
             };
@@ -65,7 +61,7 @@ namespace LogAnalytics.Client.Service
         private void InitializeClient()
         {
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            _httpClient.DefaultRequestHeaders.Add("Log-Type", _logName);
+            _httpClient.DefaultRequestHeaders.Add("Log-Type", _configuration.LogName);
             _httpClient.DefaultRequestHeaders.Add("time-generated-field", "time");
         }
         public void Log(LogEntry entry)
@@ -85,7 +81,7 @@ namespace LogAnalytics.Client.Service
                 var json = JsonSerializer.Serialize(_buffer);
                 var date = DateTime.UtcNow.ToString("r");
                 var message = new HttpRequestMessage(HttpMethod.Post, new Uri(_url));
-                var authorizationHeader = json.CreateSignature(_workspaceId, _sharedAccessKey, HttpMethod.Post, date);
+                var authorizationHeader = json.CreateSignature(_configuration.WorkspaceId, _configuration.SharedAccessKey, HttpMethod.Post, date);
                 var httpContent = new StringContent(json, Encoding.UTF8);
                 message.Headers.Add("Authorization", $"SharedKey {authorizationHeader}");
                 httpContent.Headers.Add("x-ms-date", date);
@@ -95,7 +91,7 @@ namespace LogAnalytics.Client.Service
                 var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
-                    _logger.LogInformation($"Sent {_buffer.Count} entries to {_logName}");
+                    _logger.LogInformation($"Sent {_buffer.Count} entries to {_configuration.LogName}");
                     _buffer.Clear();
                     return (result, null);
                 }
