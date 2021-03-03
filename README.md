@@ -1,3 +1,5 @@
+[![.NET](https://github.com/FrodeHus/modsecurity-loganalytics/actions/workflows/dotnet.yml/badge.svg)](https://github.com/FrodeHus/modsecurity-loganalytics/actions/workflows/dotnet.yml)
+
 # ModSecurity logger for Azure Log Analytics
 
 Simple console application that monitors a folder and sends off ModSecurity logs to Azure Log Analytics (buffered - every 2 minutes).
