@@ -1,9 +1,9 @@
 {
-    "id": "ModSecurity",
-    "title": "ModSecurity",
+    "id": "ModSecurityLogger",
+    "title": "ModSecurity Logger",
     "publisher": "Frode Hus",
     "logo": "",
-    "descriptionMarkdown": "This data connector uses a custom agent that reads ModSecurity JSON logs and sends them to Azure Sentinel Log Analytics.",
+    "descriptionMarkdown": "This data connector uses a custom agent, [ModSecurityLogger](https://github.com/frodehus/modsecurity-loganalytics) that reads [ModSecurity](https://www.modsecurity.org) JSON logs and sends them to Azure Sentinel Log Analytics.",
     "graphQueries": [
         {
             "metricName": "Total data received",
@@ -62,7 +62,21 @@
     "instructionSteps": [
         {
             "title": "Configure ModSecurity",
-            "description": "1. Set ModSecurity to use `Concurrent` logging\n2. Set log format to JSON.\n```SecAuditLogType Concurrent\nSecAuditLogStorageDir /var/log/modsecurity/audit\nSecAuditLogFormat JSON```"
+            "description": "",
+            "innerSteps": [
+                {
+                    "title": "Set ModSecurity to use `Concurrent` logging",
+                    "description": "Edit `modsecurity.conf` to have the value `SecAuditLogType Concurrent`"
+                },
+                {
+                    "title": "Set the concurrent audit log directory (make sure this exists)",
+                    "description": "Edit `modsecurity.conf` to have the value `SecAuditLogStorageDir /var/log/modsecurity/audit`"
+                },
+                {
+                    "title": "Set the log format to JSON",
+                    "description": "Edit `modsecurity.conf` to have the value `SecAuditLogFormat JSON`"
+                }
+            ]
         },
         {
             "title": "Configure ModSecurityLogger",
