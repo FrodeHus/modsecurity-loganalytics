@@ -71,7 +71,7 @@ namespace LogAnalytics.Client.Service
             while ((line = reader.ReadLine()) != null)
             {
                 (string filePath, string md5sum) = ParseAuditLogLine(line);
-                if (string.IsNullOrEmpty(filePath) || string.IsNullOrEmpty(md5sum))
+                if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath) || string.IsNullOrEmpty(md5sum))
                 {
                     _logger.LogError("Could not find log or md5sum");
                     continue;

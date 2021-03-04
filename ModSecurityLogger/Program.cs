@@ -62,6 +62,11 @@ namespace ModSecurityLogger
                     config.LogName = o.LogName;
                 }
 
+                if (!string.IsNullOrEmpty(o.AuditLogPath))
+                {
+                    config.AuditLogFile = o.AuditLogPath;
+                }
+
                 logClient = new LogAnalyticsService(new System.Net.Http.HttpClient(), config, loggerFactory.CreateLogger<ITalkToLogAnalytics>());
                 log.LogInformation($"Watching {o.AuditLogPath}...");
                 logWatcher = new AuditLogWatcher(config, loggerFactory.CreateLogger<AuditLogWatcher>());

@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/ModSecurityLogger/bin/Debug/net5.0/linux-x64/ModSecurityLogger.dll",
-            "args": ["-k", "secret", "-w", "1234", "-l", "OpenWAF", "-p", "/tmp/logs"],
+            "args": ["-k", "secret", "-w", "1234", "-l", "OpenWAF", "-f", "/tmp/log"],
             "cwd": "${workspaceFolder}/ModSecurityLogger",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",
