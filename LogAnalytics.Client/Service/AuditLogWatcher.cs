@@ -33,12 +33,7 @@ namespace LogAnalytics.Client.Service
 
         public void Start()
         {
-            var existingMarker = File.ReadAllText(_fileMarkerFile);
-            if (long.TryParse(existingMarker, out var existingFileMarker))
-            {
-                _fileMarker = existingFileMarker;
-            }
-
+            _fileMarker = GetWhereWeLeftOff();
             _timer = new Timer
             {
                 Interval = _configuration.PollingInterval,
@@ -48,6 +43,18 @@ namespace LogAnalytics.Client.Service
 
             _timer.Elapsed += Poll;
             _timer.Start();
+        }
+
+        private static long GetWhereWeLeftOff()
+        {
+            if (!File.Exists(_fileMarkerFile)) return 0;
+
+            var existingMarker = File.ReadAllText(_fileMarkerFile);
+            if (long.TryParse(existingMarker, out var existingFileMarker))
+            {
+                return existingFileMarker;
+            }
+            return 0;
         }
 
         private void Poll(object sender, ElapsedEventArgs e)
