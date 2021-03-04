@@ -10,12 +10,12 @@ namespace LogAnalytics.Client.Model
         {
 
         }
-        public Configuration(string workspaceId, string sharedAccessKey, string logName, string logDirectory)
+        public Configuration(string workspaceId, string sharedAccessKey, string logName, string auditLogFile)
         {
             WorkspaceId = workspaceId;
             SharedAccessKey = sharedAccessKey;
             LogName = logName;
-            LogDirectory = logDirectory;
+            AuditLogFile = auditLogFile;
         }
 
         public static Configuration FromFile(string configurationFile)
@@ -24,10 +24,10 @@ namespace LogAnalytics.Client.Model
             return JsonSerializer.Deserialize<Configuration>(config, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
 
+        public string AuditLogFile { get; set; }
         public string WorkspaceId { get; set; }
         public string SharedAccessKey { get; set; }
         public string LogName { get; set; }
-        public string LogDirectory { get; set; }
         ///<summary>
         /// How often to poll for log file changes (only used for PollingLogWatcherService)
         ///</summary>

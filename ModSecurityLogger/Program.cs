@@ -18,8 +18,8 @@ namespace ModSecurityLogger
             public string LogName { get; set; }
             [Option('k', "key", Required = false, HelpText = "Access key secret")]
             public string SharedAccessKey { get; set; }
-            [Option('p', "path", Required = false, HelpText = "Where to look for logfiles")]
-            public string LogPath { get; set; }
+            [Option('l', "logfile", Required = false, HelpText = "ModSecurity audit log file (ie. /var/log/modsec_audit.log)")]
+            public string AuditLogPath { get; set; }
             [Option('f', "config-file", Required = false, HelpText = "Provide all configuration via file")]
             public string ConfigFile { get; set; }
         }
@@ -63,17 +63,8 @@ namespace ModSecurityLogger
                 }
 
                 logClient = new LogAnalyticsService(new System.Net.Http.HttpClient(), config, loggerFactory.CreateLogger<ITalkToLogAnalytics>());
-                log.LogInformation($"Watching {o.LogPath}...");
-
-                if (IsRunningInContainer())
-                {
-                    log.LogInformation("Running in container - using polling method [10 seconds]");
-                    logWatcher = new PollingLogWatcherService(config);
-                }
-                else
-                {
-                    logWatcher = new LogWatcherService(config);
-                }
+                log.LogInformation($"Watching {o.AuditLogPath}...");
+                logWatcher = new AuditLogWatcher(config, loggerFactory.CreateLogger<AuditLogWatcher>());
 
             });
             if (logClient == null || logWatcher == null) return;
@@ -87,8 +78,6 @@ namespace ModSecurityLogger
                     var logEntry = JsonSerializer.Deserialize<LogEntry>(json);
                     log.LogInformation($"{logEntry.Transaction.UniqueId} - {logEntry.Transaction.ClientIp} -> {logEntry.Transaction.HostIp}:{logEntry.Transaction.HostPort}");
                     logClient.Log(logEntry);
-                    using var processed = File.Create(Path.Combine(logWatcher.GetProcessedFilesDirectory(), logFile.FileHash));
-                    File.Delete(logFile.FilePath);
                 }
                 catch (Exception ex)
                 {

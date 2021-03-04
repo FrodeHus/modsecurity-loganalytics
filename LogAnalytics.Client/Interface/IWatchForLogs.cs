@@ -7,7 +7,5 @@ namespace LogAnalytics.Client.Service
         event EventHandler<LogAddedEventArgs> LogFileAdded;
 
         void Start();
-
-        string GetProcessedFilesDirectory();
     }
 }

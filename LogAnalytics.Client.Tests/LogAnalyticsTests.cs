@@ -72,7 +72,7 @@ namespace LogAnalytics.Client.Tests
         [Fact]
         public void ItCanReadConfigFromFile()
         {
-            var expected = new Configuration("123", "secret", "ModSecurity", "/var/log/modsecurity/audit");
+            var expected = new Configuration("123", "secret", "ModSecurity", "/var/log/modsecurity/audit.log");
             var actual = Configuration.FromFile("../../../data/SampleConfig.json");
             actual.Should().BeEquivalentTo(expected);
         }

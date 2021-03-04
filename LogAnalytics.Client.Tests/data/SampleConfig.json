@@ -2,5 +2,5 @@
     "WorkspaceId": "123",
     "SharedAccessKey": "secret",
     "LogName": "ModSecurity",
-    "LogDirectory": "/var/log/modsecurity/audit"
+    "AuditLogFile": "/var/log/modsecurity/audit.log"
 }
