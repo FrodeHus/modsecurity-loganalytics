@@ -32,8 +32,26 @@
         }
     ],
     "availability": {
-        "status": 1,
-        "isPreview": true
+        "status": 2,
+        "isPreview": true,
+        "featureFlag": {
+            "feature": "ModSecurityConnector",
+            "defaultValue": true,
+            "featureStateOverrides": [
+                {
+                    "cloudEnvironment": 5,
+                    "explicitFeatureState": 1
+                },
+                {
+                    "cloudEnvironment": 6,
+                    "explicitFeatureState": 1
+                },
+                {
+                    "cloudEnvironment": 7,
+                    "explicitFeatureState": 1
+                }
+            ]
+        }
     },
     "permissions": {
         "resourceProvider": [
@@ -62,21 +80,7 @@
     "instructionSteps": [
         {
             "title": "Configure ModSecurity",
-            "description": "",
-            "innerSteps": [
-                {
-                    "title": "Set ModSecurity to use `Concurrent` logging",
-                    "description": "Edit `modsecurity.conf` to have the value `SecAuditLogType Concurrent`"
-                },
-                {
-                    "title": "Set the concurrent audit log directory (make sure this exists)",
-                    "description": "Edit `modsecurity.conf` to have the value `SecAuditLogStorageDir /var/log/modsecurity/audit`"
-                },
-                {
-                    "title": "Set the log format to JSON",
-                    "description": "Edit `modsecurity.conf` to have the value `SecAuditLogFormat JSON`"
-                }
-            ]
+            "description": "1. Configure concurrent logging and JSON format\n\n> 2. Edit `modsecurity.conf` to have the value `SecAuditLogType Concurrent`\n3. Edit `modsecurity.conf` to have the value `SecAuditLogStorageDir /var/log/modsecurity/audit`\n4. Edit `modsecurity.conf` to have the value `SecAuditLogFormat JSON`"
         },
         {
             "title": "Configure ModSecurityLogger",
