@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Timers;
+using LogAnalytics.Client.Helper;
 using LogAnalytics.Client.Model;
 using Microsoft.Extensions.Logging;
 
@@ -95,10 +96,8 @@ namespace LogAnalytics.Client.Service
         ///</summary>
         private static bool ValidateChecksum(string logfile, string md5sum)
         {
-            var checksum = Encoding.UTF8.GetBytes(md5sum);
-            using var hasher = MD5.Create();
-            var logHash = hasher.ComputeHash(File.ReadAllBytes(logfile));
-            if (logHash == checksum)
+            var logHash = FileUtils.GenerateMd5Sum(logfile);
+            if (logHash == md5sum)
             {
                 return true;
             }

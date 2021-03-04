@@ -70,6 +70,14 @@ namespace LogAnalytics.Client.Tests
         }
 
         [Fact]
+        public void ItCanValidateMd5Sums()
+        {
+            const string expected = "061A2A82086E33843E5854F0F7354F3D";
+            var actual = FileUtils.GenerateMd5Sum("../../../data/SampleEntry.json");
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
         public void ItCanReadConfigFromFile()
         {
             var expected = new Configuration("123", "secret", "ModSecurity", "/var/log/modsecurity/audit.log");
