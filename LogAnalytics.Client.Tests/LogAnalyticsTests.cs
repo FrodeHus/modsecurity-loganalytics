@@ -72,7 +72,7 @@ namespace LogAnalytics.Client.Tests
         [Fact]
         public void ItCanValidateMd5Sums()
         {
-            const string expected = "061A2A82086E33843E5854F0F7354F3D";
+            const string expected = "061a2a82086e33843e5854f0f7354f3d";
             var actual = FileUtils.GenerateMd5Sum("../../../data/SampleEntry.json");
             actual.Should().Be(expected);
         }

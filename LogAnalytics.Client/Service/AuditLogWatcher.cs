@@ -97,7 +97,7 @@ namespace LogAnalytics.Client.Service
         private static bool ValidateChecksum(string logfile, string md5sum)
         {
             var logHash = FileUtils.GenerateMd5Sum(logfile);
-            if (logHash == md5sum)
+            if (logHash.Equals(md5sum, StringComparison.InvariantCultureIgnoreCase))
             {
                 return true;
             }

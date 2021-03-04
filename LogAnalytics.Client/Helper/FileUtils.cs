@@ -26,7 +26,7 @@ namespace LogAnalytics.Client.Helper
             using var stream = File.OpenRead(file);
             using var md5 = MD5.Create();
             var hash = md5.ComputeHash(stream);
-            return BitConverter.ToString(hash).Replace("-", string.Empty);
+            return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
         }
     }
 }

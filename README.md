@@ -33,7 +33,7 @@ Configuration file follows this format (use this to lock down permissions and no
     "WorkspaceId": "123",
     "SharedAccessKey": "secret",
     "LogName": "ModSecurity",
-    "LogDirectory": "/var/log/modsecurity/audit"
+    "AuditLogFile": "/var/log/modsecurity/audit.log"
 }
 ```
 
