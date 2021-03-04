@@ -16,9 +16,9 @@ Copyright (C) 2021 ModSecurityLogger
 
   -k, --key            Access key secret
 
-  -p, --path           Where to look for logfiles
+  -f, --logfile        ModSecurity audit log file (ie. /var/log/modsec_audit.log)
 
-  -f, --config-file    Provide all configuration via file
+  -c, --config-file    Provide all configuration via file
 
   --help               Display this help screen.
 
