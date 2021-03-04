@@ -80,7 +80,7 @@
     "instructionSteps": [
         {
             "title": "Configure ModSecurity",
-            "description": "1. Configure concurrent logging and JSON format\n\n> 2. Edit `modsecurity.conf` to have the value `SecAuditLogType Concurrent`\n3. Edit `modsecurity.conf` to have the value `SecAuditLogStorageDir /var/log/modsecurity/audit`\n4. Edit `modsecurity.conf` to have the value `SecAuditLogFormat JSON`"
+            "description": "1. Configure concurrent logging and JSON format\n\n> 2. Edit `modsecurity.conf` to have the value `SecAuditLogType Concurrent`\n3. Edit `modsecurity.conf` to have the value `SecAuditLogStorageDir /var/log/modsecurity/audit`\n4. Edit `modsecurity.conf` to have the value `SecAuditLogFormat JSON`\n5.Edit `modsecurity.conf` to have the value `SecAuditLog /var/log/modsecurity/audit.log`"
         },
         {
             "title": "Configure ModSecurityLogger",
@@ -93,7 +93,7 @@
                             "PrimaryKey"
                         ],
                         "label": "Create a new file called `modsecurity_agent.json` and copy this template into it",
-                        "value": "{\n\"WorkspaceId\": \"{0}\",\n \"SharedAccessKey\": \"{1}\",\n \"LogName\": \"ModSecurity\",\n \"LogDirectory\": \"/var/log/modsecurity/audit\"\n}"
+                        "value": "{\n\"WorkspaceId\": \"{0}\",\n \"SharedAccessKey\": \"{1}\",\n \"LogName\": \"ModSecurity\",\n \"AuditLogFile\": \"/var/log/modsecurity/audit.log\"\n}"
                     },
                     "type": "CopyableLabel"
                 },
@@ -101,7 +101,7 @@
                     "type": "CopyableLabel",
                     "parameters": {
                         "label": "Run the following command to start sending logs to Azure Sentinel Log Analytics",
-                        "value": "ModSecurityLogger -f modsecurity_agent.json"
+                        "value": "ModSecurityLogger -c modsecurity_agent.json"
                     }
                 }
             ]

@@ -18,9 +18,9 @@ namespace ModSecurityLogger
             public string LogName { get; set; }
             [Option('k', "key", Required = false, HelpText = "Access key secret")]
             public string SharedAccessKey { get; set; }
-            [Option('l', "logfile", Required = false, HelpText = "ModSecurity audit log file (ie. /var/log/modsec_audit.log)")]
+            [Option('f', "logfile", Required = false, HelpText = "ModSecurity audit log file (ie. /var/log/modsec_audit.log)")]
             public string AuditLogPath { get; set; }
-            [Option('f', "config-file", Required = false, HelpText = "Provide all configuration via file")]
+            [Option('c', "config-file", Required = false, HelpText = "Provide all configuration via file")]
             public string ConfigFile { get; set; }
         }
         static void Main(string[] args)
