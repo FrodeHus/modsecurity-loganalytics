@@ -1,7 +1,7 @@
 {
-    "id": "ModSecurityLogger",
-    "title": "ModSecurity Logger",
-    "publisher": "Frode Hus",
+    "id": "ModSecurity",
+    "title": "ModSecurity",
+    "publisher": "Trustwave",
     "logo": "",
     "descriptionMarkdown": "This data connector uses a custom agent, [ModSecurityLogger](https://github.com/frodehus/modsecurity-loganalytics) that reads [ModSecurity](https://www.modsecurity.org) JSON logs and sends them to Azure Sentinel Log Analytics.",
     "graphQueries": [
