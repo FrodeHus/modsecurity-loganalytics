@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -83,6 +84,19 @@ namespace LogAnalytics.Client.Tests
             var expected = new Configuration("123", "secret", "ModSecurity", "/var/log/modsecurity/audit.log");
             var actual = Configuration.FromFile("../../../data/SampleConfig.json");
             actual.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ItSerializesHeaderDictionaryToLowercase()
+        {
+            var headers = new Dictionary<string,string>{
+                {"User-Agent", "test"}
+            };
+            var value = new Request{Headers = headers};
+            const string expected = "{\"method\":null,\"http_version\":0,\"uri\":null,\"headers\":[\"user-agent\":{\"test\"}]}";
+            var actual = JsonSerializer.Serialize(value);
+            actual.Should().Be(expected);
+
         }
     }
 }

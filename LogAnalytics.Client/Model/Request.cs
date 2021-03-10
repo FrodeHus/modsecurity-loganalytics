@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using LogAnalytics.Client.Helper;
 
 namespace LogAnalytics.Client.Model
 {
@@ -12,6 +13,7 @@ namespace LogAnalytics.Client.Model
         [JsonPropertyName("uri")]
         public string Uri { get; set; }
         [JsonPropertyName("headers")]
-        public Dictionary<string,string> Headers { get; set; }
+        [JsonConverter(typeof(HeaderConverter))]
+        public Dictionary<string, string> Headers { get; set; }
     }
 }
