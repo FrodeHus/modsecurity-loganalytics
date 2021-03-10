@@ -93,7 +93,7 @@ namespace LogAnalytics.Client.Tests
                 {"User-Agent", "test"}
             };
             var value = new Request{Headers = headers};
-            const string expected = "{\"method\":null,\"http_version\":0,\"uri\":null,\"headers\":[\"user-agent\":{\"test\"}]}";
+            const string expected = "{\"method\":null,\"http_version\":0,\"uri\":null,\"headers\":{\"user-agent\":\"test\"}}";
             var actual = JsonSerializer.Serialize(value);
             actual.Should().Be(expected);
 

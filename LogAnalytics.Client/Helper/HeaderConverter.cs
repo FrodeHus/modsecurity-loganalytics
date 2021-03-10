@@ -42,14 +42,13 @@ namespace LogAnalytics.Client.Helper
 
         public override void Write(Utf8JsonWriter writer, Dictionary<string, string> value, JsonSerializerOptions options)
         {
-            writer.WriteStartArray();
+            writer.WriteStartObject();
             foreach (var property in value.Keys)
             {
-                writer.WriteStartObject(property.ToLowerInvariant());
+                writer.WritePropertyName(property.ToLowerInvariant());
                 writer.WriteStringValue(value[property]);
-                writer.WriteEndObject();
             }
-            writer.WriteEndArray();
+            writer.WriteEndObject();
         }
     }
 }
